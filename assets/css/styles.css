@@ -1,0 +1,111 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f5e9dc;
+  font-family: 'Georgia', serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  text-align: center;
+  max-width: 800px;
+  width: 100%;
+}
+
+h1 {
+  color: #8b5a2b;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Envelope e carta */
+.envelope {
+  width: 100%;
+  max-width: 500px;
+  height: 400px;
+  margin: 0 auto 30px;
+  perspective: 1000px;
+}
+
+.letter {
+  width: 100%;
+  height: 100%;
+  background: url('https://www.transparenttextures.com/patterns/paper.png'), #fdf6e3;
+  background-size: 200px;
+  border: 1px solid #d4c1a8;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+/* Estiliza o iframe para parecer parte do papel */
+#cartaFrame {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+/* Simulando dobras suaves */
+.letter::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 10% 20%, rgba(0,0,0,0.03) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(0,0,0,0.02) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Controles */
+.controls {
+  margin-top: 20px;
+}
+
+.controls button {
+  background: #8b5a2b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.controls button:hover:not(:disabled) {
+  background: #6f4722;
+}
+
+.controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#counter {
+  margin: 0 15px;
+  font-weight: bold;
+  color: #8b5a2b;
+}
+
+p {
+    text-align: justify;
+  }
+  strong {
+    display: block;
+    margin-top: 20px;
+    text-align: right;
+  }
+
+  

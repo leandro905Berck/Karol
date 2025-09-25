@@ -1,13 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karol</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <script src="assets/js/script.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cartas para Você ❤️</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
-    
+  <div class="container">
+    <h1>Cartas para Minha Amor</h1>
+
+    <!-- Envelope estilizado com iframe dentro -->
+    <div class="envelope">
+      <div class="letter" id="letter">
+        <iframe id="cartaFrame" src="cartas/carta1.html" frameborder="0"></iframe>
+      </div>
+    </div>
+
+    <!-- Controles de navegação -->
+    <div class="controls">
+      <button id="prevBtn" disabled>◀ Anterior</button>
+      <span id="counter">1 / 3</span>
+      <button id="nextBtn">Próxima ▶</button>
+    </div>
+  </div>
+
+  <script src="assets/js/script.js"></script>
 </body>
 </html>
