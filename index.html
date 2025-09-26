@@ -3,25 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cartas para Você Momozinha!! ❤️</title>
+  <title>Cartas para Você ❤️</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Cartas para Minha Amor</h1>
+    <div class="book-wrapper" id="bookWrapper">
+      <!-- Capa (modo fechado) -->
+      <div class="book-cover-container" id="coverContainer">
+        <div class="book-cover-content" id="coverContent">
+          <!-- Conteúdo da capa será carregado aqui -->
+        </div>
+      </div>
 
-    <!-- Envelope estilizado com iframe dentro -->
-    <div class="envelope">
-      <div class="card-container" id="cardContainer">
-        <div class="card-half left-half" id="leftHalf"></div>
-        <div class="card-half right-half" id="rightHalf"></div>
+      <!-- Livro aberto (modo interno) -->
+      <div class="book-open" id="bookOpen" style="display: none;">
+        <div class="card-container">
+          <div class="card-half left-half" id="leftHalf"></div>
+          <div class="card-half right-half" id="rightHalf"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Controles de navegação -->
-    <div class="controls">
+    <div class="controls" id="controls">
       <button id="prevBtn" disabled>◀ Anterior</button>
-      <span id="counter">1 / 3</span>
+      <span id="counter">Capa</span>
       <button id="nextBtn">Próxima ▶</button>
     </div>
   </div>

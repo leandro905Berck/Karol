@@ -1,15 +1,28 @@
 const totalCartas = 3;
-let cartaAtual = 1;
+let paginaAtual = 0; // 0 = capa, 1 = carta1, 2 = carta2, etc.
 
+const coverContainer = document.getElementById('coverContainer');
+const coverContent = document.getElementById('coverContent');
+const bookOpen = document.getElementById('bookOpen');
 const leftHalf = document.getElementById('leftHalf');
 const rightHalf = document.getElementById('rightHalf');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const counter = document.getElementById('counter');
+const controls = document.getElementById('controls');
 
-// Função para carregar e exibir uma carta (com duas páginas)
+// Carrega a capa
+async function carregarCapa() {
+  try {
+    const response = await fetch('capa.html');
+    coverContent.innerHTML = await response.text();
+  } catch (err) {
+    coverContent.innerHTML = '<div class="book-cover"><h2>Cartas para Minha Amor</h2><p>Por: Você ❤️</p></div>';
+  }
+}
+
+// Carrega uma carta (páginas esquerda e direita)
 async function carregarCarta(num) {
-  // Fecha as páginas
   leftHalf.classList.add('closed');
   rightHalf.classList.add('closed');
 
@@ -19,24 +32,15 @@ async function carregarCarta(num) {
     const response = await fetch(`cartas/carta${num}.html`);
     const html = await response.text();
 
-    // Cria um elemento temporário para extrair as páginas
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
 
-    // Extrai as páginas
-    const pageLeft = tempDiv.querySelector('.page-left')?.outerHTML || '<div class="page-left"><p></p></div>';
-    const pageRight = tempDiv.querySelector('.page-right')?.outerHTML || '<div class="page-right"><p></p></div>';
+    const pageLeft = tempDiv.querySelector('.page-left')?.innerHTML || '';
+    const pageRight = tempDiv.querySelector('.page-right')?.innerHTML || '';
 
-    // Insere no layout
-    leftHalf.innerHTML = `<div class="card-content">${pageLeft}</div>`;
-    rightHalf.innerHTML = `<div class="card-content">${pageRight}</div>`;
+    leftHalf.innerHTML = `<div class="page-content page-left">${pageLeft}</div>`;
+    rightHalf.innerHTML = `<div class="page-content page-right">${pageRight}</div>`;
 
-    // Atualiza controles
-    counter.textContent = `${num} / ${totalCartas}`;
-    prevBtn.disabled = num === 1;
-    nextBtn.disabled = num === totalCartas;
-
-    // Abre as páginas
     setTimeout(() => {
       leftHalf.classList.remove('closed');
       leftHalf.classList.add('open');
@@ -45,28 +49,56 @@ async function carregarCarta(num) {
     }, 100);
 
   } catch (err) {
-    console.error("Erro ao carregar carta:", err);
-    leftHalf.innerHTML = `<div class="card-content"><p>Erro ao carregar a carta.</p></div>`;
-    rightHalf.innerHTML = `<div class="card-content"><p>Erro ao carregar a carta.</p></div>`;
+    leftHalf.innerHTML = '<div class="page-content"><p>Erro ao carregar.</p></div>';
+    rightHalf.innerHTML = '<div class="page-content"><p>Erro ao carregar.</p></div>';
   }
 }
 
-// Inicializa
-window.addEventListener('DOMContentLoaded', () => {
-  carregarCarta(cartaAtual);
-});
+// Mostra capa ou livro
+function mostrarModo(modo) {
+  if (modo === 'capa') {
+    coverContainer.style.display = 'block';
+    bookOpen.style.display = 'none';
+    counter.textContent = 'Capa';
+  } else {
+    coverContainer.style.display = 'none';
+    bookOpen.style.display = 'block';
+    counter.textContent = `${paginaAtual} / ${totalCartas}`;
+  }
+}
 
 // Navegação
-prevBtn.addEventListener('click', () => {
-  if (cartaAtual > 1) {
-    cartaAtual--;
-    carregarCarta(cartaAtual);
-  }
-});
+function navegar(delta) {
+  const novaPagina = paginaAtual + delta;
 
-nextBtn.addEventListener('click', () => {
-  if (cartaAtual < totalCartas) {
-    cartaAtual++;
-    carregarCarta(cartaAtual);
+  if (novaPagina === 0) {
+    // Voltar para capa
+    mostrarModo('capa');
+    prevBtn.disabled = true;
+    nextBtn.disabled = false;
+  } else if (novaPagina >= 1 && novaPagina <= totalCartas) {
+    // Ir para carta
+    if (paginaAtual === 0) {
+      // Primeira vez: mostrar livro
+      mostrarModo('livro');
+      setTimeout(() => carregarCarta(novaPagina), 300);
+    } else {
+      carregarCarta(novaPagina);
+    }
+    prevBtn.disabled = novaPagina === 1;
+    nextBtn.disabled = novaPagina === totalCartas;
   }
+
+  paginaAtual = novaPagina;
+}
+
+// Eventos
+prevBtn.addEventListener('click', () => navegar(-1));
+nextBtn.addEventListener('click', () => navegar(1));
+
+// Inicializa
+window.addEventListener('DOMContentLoaded', () => {
+  carregarCapa();
+  prevBtn.disabled = true;
+  nextBtn.disabled = false;
 });
