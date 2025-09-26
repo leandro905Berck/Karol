@@ -1,42 +1,56 @@
-const totalCartas = 3; // Ajuste conforme o número de cartas
+const totalCartas = 3;
 let cartaAtual = 1;
 
-const letter = document.getElementById('letter');
-const frame = document.getElementById('cartaFrame');
+const leftHalf = document.getElementById('leftHalf');
+const rightHalf = document.getElementById('rightHalf');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const counter = document.getElementById('counter');
 
-function carregarCarta(num) {
-  // 1. Fecha a carta (adiciona classe 'closed')
-  letter.classList.remove('open');
-  letter.classList.add('closed');
+// Função para carregar e exibir uma carta
+async function carregarCarta(num) {
+  // 1. Fecha as metades
+  leftHalf.classList.add('closed');
+  rightHalf.classList.add('closed');
 
-  // 2. Aguarda a animação de fechar terminar
-  setTimeout(() => {
-    // 3. Troca o conteúdo (carrega nova carta)
-    frame.src = `cartas/carta${num}.html`;
+  // 2. Aguarda a animação de fechar
+  await new Promise(resolve => setTimeout(resolve, 800));
 
-    // 4. Atualiza controles
+  try {
+    // 3. Busca o conteúdo da carta
+    const response = await fetch(`cartas/carta${num}.html`);
+    const html = await response.text();
+
+    // 4. Insere o mesmo conteúdo em ambas as metades
+    leftHalf.innerHTML = `<div class="card-content">${html}</div>`;
+    rightHalf.innerHTML = `<div class="card-content">${html}</div>`;
+
+    // 5. Atualiza controles
     counter.textContent = `${num} / ${totalCartas}`;
     prevBtn.disabled = num === 1;
     nextBtn.disabled = num === totalCartas;
 
-    // 5. Reabre a carta após um pequeno delay
+    // 6. Abre a carta
     setTimeout(() => {
-      letter.classList.remove('closed');
-      letter.classList.add('open');
-    }, 300); // Delay para garantir que o iframe carregue antes de abrir
-  }, 600); // Tempo da animação de fechar (600ms)
+      leftHalf.classList.remove('closed');
+      leftHalf.classList.add('open');
+      rightHalf.classList.remove('closed');
+      rightHalf.classList.add('open');
+    }, 100);
+
+  } catch (err) {
+    console.error("Erro ao carregar carta:", err);
+    leftHalf.innerHTML = `<div class="card-content"><p>Erro ao carregar a carta.</p></div>`;
+    rightHalf.innerHTML = leftHalf.innerHTML;
+  }
 }
 
-// Inicializa com a carta aberta
-window.addEventListener('load', () => {
-  letter.classList.remove('closed');
-  letter.classList.add('open');
+// Carrega a primeira carta ao iniciar
+window.addEventListener('DOMContentLoaded', () => {
+  carregarCarta(cartaAtual);
 });
 
-// Eventos dos botões
+// Navegação
 prevBtn.addEventListener('click', () => {
   if (cartaAtual > 1) {
     cartaAtual--;
