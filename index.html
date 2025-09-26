@@ -4,34 +4,581 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cartas para Você ❤️</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5e9dc 0%, #e8d5b5 100%);
+      font-family: 'Georgia', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      text-align: center;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    /* === CAPA DAS CARTAS === */
+    .letters-cover {
+      perspective: 1000px;
+      margin-bottom: 30px;
+    }
+
+    .cover-card {
+      background: linear-gradient(145deg, #fdf6e3, #f4e4c1);
+      border: 3px solid #8b5a2b;
+      border-radius: 15px;
+      padding: 50px 30px;
+      box-shadow: 
+        0 20px 40px rgba(139, 90, 43, 0.3),
+        0 8px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transform-style: preserve-3d;
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      max-width: 450px;
+      margin: 0 auto;
+    }
+
+    .cover-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.8s;
+    }
+
+    .cover-card:hover {
+      transform: rotateY(5deg) rotateX(2deg) scale(1.02);
+      box-shadow: 
+        0 30px 60px rgba(139, 90, 43, 0.4),
+        0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .cover-card:hover::before {
+      left: 100%;
+    }
+
+    .cover-title {
+      font-size: 2.2rem;
+      color: #8b5a2b;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .cover-subtitle {
+      font-size: 1.2rem;
+      color: #6b4423;
+      margin-bottom: 10px;
+    }
+
+    .cover-description {
+      font-size: 1.1rem;
+      color: #5a4a42;
+      font-style: italic;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    /* === CARTA INDIVIDUAL === */
+    .letter-container {
+      display: none;
+      perspective: 1200px;
+      width: 100%;
+      height: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .letter-container.active {
+      display: block;
+    }
+
+    .letter-envelope {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .letter-fold {
+      position: absolute;
+      background: linear-gradient(145deg, #fdf6e3, #f4e4c1);
+      border: 2px solid #d4c1a8;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    /* Parte de trás da carta (envelope) */
+    .letter-back {
+      width: 100%;
+      height: 100%;
+      transform-origin: top;
+      z-index: 1;
+    }
+
+    /* Parte da frente da carta (conteúdo) */
+    .letter-front {
+      width: 100%;
+      height: 100%;
+      transform-origin: top;
+      transform: rotateX(180deg);
+      z-index: 2;
+    }
+
+    .letter-envelope.opened .letter-back {
+      transform: rotateX(-180deg);
+    }
+
+    .letter-envelope.opened .letter-front {
+      transform: rotateX(0deg);
+    }
+
+    .letter-content {
+      padding: 40px;
+      height: 100%;
+      overflow-y: auto;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #5a4a42;
+      text-align: left;
+      position: relative;
+    }
+
+    .letter-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 60px;
+      width: 2px;
+      height: 100%;
+      background: #e8d5b5;
+      opacity: 0.5;
+    }
+
+    .envelope-content {
+      padding: 40px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(45deg, #8b5a2b, #6b4423);
+      color: white;
+    }
+
+    .envelope-title {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .envelope-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    .letter-header {
+      font-size: 1.4rem;
+      color: #8b5a2b;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+
+    .letter-body {
+      margin-bottom: 30px;
+    }
+
+    .letter-signature {
+      text-align: right;
+      font-style: italic;
+      margin-top: 40px;
+    }
+
+    /* === CONTROLES === */
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      background: linear-gradient(145deg, #8b5a2b, #6b4423);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+      font-family: inherit;
+      min-width: 120px;
+    }
+
+    .control-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 90, 43, 0.4);
+      background: linear-gradient(145deg, #9d6530, #7a4e26);
+    }
+
+    .control-btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2px 6px rgba(139, 90, 43, 0.2);
+    }
+
+    .counter {
+      font-weight: bold;
+      color: #8b5a2b;
+      font-size: 1.1rem;
+      min-width: 80px;
+      padding: 8px 16px;
+      background: rgba(139, 90, 43, 0.1);
+      border-radius: 20px;
+    }
+
+    .open-btn {
+      background: linear-gradient(145deg, #d4af37, #b8941f);
+      margin-top: 20px;
+      font-size: 1.1rem;
+      padding: 15px 30px;
+    }
+
+    .open-btn:hover {
+      background: linear-gradient(145deg, #e8c547, #cc9f22);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+    }
+
+    /* === ANIMAÇÕES === */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-2px); }
+      75% { transform: translateX(2px); }
+    }
+
+    .letter-container.active {
+      animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .controls {
+      animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
+    }
+
+    /* === RESPONSIVIDADE === */
+    @media (max-width: 768px) {
+      .letter-container {
+        height: 500px;
+      }
+
+      .letter-content {
+        padding: 25px;
+        font-size: 1.1rem;
+      }
+
+      .cover-title {
+        font-size: 1.8rem;
+      }
+
+      .cover-card {
+        padding: 40px 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .letter-container {
+        height: 450px;
+      }
+
+      .letter-content {
+        padding: 20px;
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      .cover-title {
+        font-size: 1.6rem;
+      }
+
+      .cover-card {
+        padding: 30px 20px;
+      }
+
+      .controls {
+        gap: 15px;
+      }
+
+      .control-btn {
+        padding: 10px 20px;
+        min-width: 100px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <div class="book-wrapper" id="bookWrapper">
-      <!-- Capa (modo fechado) -->
-      <div class="book-cover-container" id="coverContainer">
-        <div class="book-cover-content" id="coverContent">
-          <!-- Conteúdo da capa será carregado aqui -->
-        </div>
-      </div>
-
-      <!-- Livro aberto (modo interno) -->
-      <div class="book-open" id="bookOpen" style="display: none;">
-        <div class="card-container">
-          <div class="card-half left-half" id="leftHalf"></div>
-          <div class="card-half right-half" id="rightHalf"></div>
-        </div>
+    <!-- Capa das Cartas -->
+    <div class="letters-cover" id="lettersCover">
+      <div class="cover-card">
+        <h1 class="cover-title">Cartas para Minha Amor</h1>
+        <p class="cover-subtitle">Por: Você ❤️</p>
+        <p class="cover-description">Uma coleção de sentimentos em palavras escritas com carinho</p>
+        <button class="control-btn open-btn" onclick="openLetters()">Abrir Cartas 💌</button>
       </div>
     </div>
 
-    <div class="controls" id="controls">
-      <button id="prevBtn" disabled>◀ Anterior</button>
-      <span id="counter">Capa</span>
-      <button id="nextBtn">Próxima ▶</button>
+    <!-- Container das Cartas -->
+    <div class="letters-section" id="lettersSection" style="display: none;">
+      <!-- Carta 1 -->
+      <div class="letter-container" id="letter1">
+        <div class="letter-envelope" id="envelope1">
+          <div class="letter-fold letter-back">
+            <div class="envelope-content">
+              <h2 class="envelope-title">Carta 1</h2>
+              <p class="envelope-subtitle">Para minha querida...</p>
+              <button class="control-btn" onclick="openLetter(1)" style="margin-top: 30px;">Abrir Carta</button>
+            </div>
+          </div>
+          <div class="letter-fold letter-front">
+            <div class="letter-content">
+              <div class="letter-header">Meu amor,</div>
+              <div class="letter-body">
+                <p>Hoje acordei pensando em você. Cada detalhe seu me faz sorrir como se fosse a primeira vez que te vejo.</p>
+                <p>Seus olhos guardam estrelas que iluminam meus dias mais cinzentos. Sua risada é a melodia mais doce que já ouvi, capaz de transformar qualquer momento comum em algo extraordinário.</p>
+                <p>Espero que esta carta te aqueça o coração como você aquece o meu todos os dias, apenas existindo e sendo essa pessoa incrível que você é.</p>
+              </div>
+              <div class="letter-signature">
+                Com todo meu carinho,<br>
+                <strong>Você ❤️</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carta 2 -->
+      <div class="letter-container" id="letter2">
+        <div class="letter-envelope" id="envelope2">
+          <div class="letter-fold letter-back">
+            <div class="envelope-content">
+              <h2 class="envelope-title">Carta 2</h2>
+              <p class="envelope-subtitle">Momozinha...</p>
+              <button class="control-btn" onclick="openLetter(2)" style="margin-top: 30px;">Abrir Carta</button>
+            </div>
+          </div>
+          <div class="letter-fold letter-front">
+            <div class="letter-content">
+              <div class="letter-header">Momozinha,</div>
+              <div class="letter-body">
+                <p>Lembrei daquele dia em que caminhamos sob a chuva, sem pressa, sem destino. Mesmo molhados, estávamos secos de felicidade.</p>
+                <p>Cada gota que caía parecia abençoar nosso momento juntos. Suas mãos nas minhas faziam todo o frio desaparecer.</p>
+                <p>Guardo cada momento com você como um tesouro precioso, cada sorriso, cada palavra, cada segundo ao seu lado é um presente que a vida me deu.</p>
+              </div>
+              <div class="letter-signature">
+                Eternamente seu,<br>
+                <strong>Você ❤️</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carta 3 -->
+      <div class="letter-container" id="letter3">
+        <div class="letter-envelope" id="envelope3">
+          <div class="letter-fold letter-back">
+            <div class="envelope-content">
+              <h2 class="envelope-title">Carta 3</h2>
+              <p class="envelope-subtitle">Bebezinha...</p>
+              <button class="control-btn" onclick="openLetter(3)" style="margin-top: 30px;">Abrir Carta</button>
+            </div>
+          </div>
+          <div class="letter-fold letter-front">
+            <div class="letter-content">
+              <div class="letter-header">Bebezinha,</div>
+              <div class="letter-body">
+                <p>Princesa do meu coração, você é a razão pela qual acordo com um sorriso no rosto todos os dias.</p>
+                <p>Em cada gesto seu encontro uma nova forma de amor. Na forma como você ri, como você me olha, como você simplesmente existe no meu mundo.</p>
+                <p>Você transformou minha vida em algo mágico, onde cada dia é uma nova página de uma história de amor que quero escrever para sempre ao seu lado.</p>
+              </div>
+              <div class="letter-signature">
+                Para sempre sua,<br>
+                <strong>Você ❤️</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controles -->
+      <div class="controls" id="controls">
+        <button class="control-btn" id="prevBtn" onclick="previousLetter()" disabled>◀ Anterior</button>
+        <div class="counter" id="counter">1 / 3</div>
+        <button class="control-btn" id="nextBtn" onclick="nextLetter()">Próxima ▶</button>
+        <button class="control-btn" onclick="backToMenu()" style="background: linear-gradient(145deg, #666, #444);">Voltar ao Menu</button>
+      </div>
     </div>
   </div>
 
-  <script src="assets/js/script.js"></script>
+  <script>
+    const totalLetters = 3;
+    let currentLetter = 1;
+    let letterStates = {
+      1: false,  // false = fechada, true = aberta
+      2: false,
+      3: false
+    };
+
+    // Função para abrir a seção de cartas
+    function openLetters() {
+      const cover = document.getElementById('lettersCover');
+      const section = document.getElementById('lettersSection');
+      
+      cover.style.transform = 'translateY(-20px)';
+      cover.style.opacity = '0';
+      
+      setTimeout(() => {
+        cover.style.display = 'none';
+        section.style.display = 'block';
+        showLetter(1);
+      }, 600);
+    }
+
+    // Função para voltar ao menu
+    function backToMenu() {
+      const cover = document.getElementById('lettersCover');
+      const section = document.getElementById('lettersSection');
+      
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(20px)';
+      
+      setTimeout(() => {
+        section.style.display = 'none';
+        cover.style.display = 'block';
+        cover.style.opacity = '0';
+        cover.style.transform = 'translateY(-20px)';
+        
+        setTimeout(() => {
+          cover.style.opacity = '1';
+          cover.style.transform = 'translateY(0)';
+        }, 100);
+        
+        // Reset states
+        currentLetter = 1;
+        for (let i = 1; i <= totalLetters; i++) {
+          letterStates[i] = false;
+          document.getElementById(`envelope${i}`).classList.remove('opened');
+        }
+      }, 300);
+    }
+
+    // Função para mostrar uma carta específica
+    function showLetter(letterNum) {
+      // Esconder todas as cartas
+      for (let i = 1; i <= totalLetters; i++) {
+        document.getElementById(`letter${i}`).classList.remove('active');
+      }
+      
+      // Mostrar a carta atual
+      document.getElementById(`letter${letterNum}`).classList.add('active');
+      currentLetter = letterNum;
+      
+      // Atualizar controles
+      updateControls();
+    }
+
+    // Função para abrir uma carta específica
+    function openLetter(letterNum) {
+      const envelope = document.getElementById(`envelope${letterNum}`);
+      envelope.classList.add('opened');
+      letterStates[letterNum] = true;
+    }
+
+    // Navegação
+    function nextLetter() {
+      if (currentLetter < totalLetters) {
+        showLetter(currentLetter + 1);
+      }
+    }
+
+    function previousLetter() {
+      if (currentLetter > 1) {
+        showLetter(currentLetter - 1);
+      }
+    }
+
+    // Atualizar estado dos controles
+    function updateControls() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const counter = document.getElementById('counter');
+      
+      prevBtn.disabled = currentLetter === 1;
+      nextBtn.disabled = currentLetter === totalLetters;
+      counter.textContent = `${currentLetter} / ${totalLetters}`;
+    }
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+      updateControls();
+      
+      // Reset das seções
+      document.getElementById('lettersSection').style.opacity = '1';
+      document.getElementById('lettersSection').style.transform = 'translateY(0)';
+    });
+
+    // Efeitos de teclado
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('lettersSection').style.display !== 'none') {
+        if (e.key === 'ArrowLeft') previousLetter();
+        if (e.key === 'ArrowRight') nextLetter();
+        if (e.key === ' ') {
+          e.preventDefault();
+          openLetter(currentLetter);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
