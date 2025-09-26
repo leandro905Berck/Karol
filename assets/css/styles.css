@@ -1,222 +1,349 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-body {
-  background: #f5e9dc;
-  font-family: 'Georgia', serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 10px;
-  overflow-x: hidden;
-}
+    body {
+      background: linear-gradient(135deg, #f5e9dc 0%, #e8d5b5 100%);
+      font-family: 'Georgia', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
 
-.container {
-  text-align: center;
-  width: 100%;
-  max-width: 900px;
-}
+    .container {
+      text-align: center;
+      width: 100%;
+      max-width: 800px;
+    }
 
-/* === CAPA DO LIVRO === */
-.book-cover-container {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  perspective: 1000px;
-}
+    /* === CAPA DAS CARTAS === */
+    .letters-cover {
+      perspective: 1000px;
+      margin-bottom: 30px;
+    }
 
-.book-cover-content {
-  background: url('https://www.transparenttextures.com/patterns/paper.png'), #e8d5b5;
-  background-size: 200px;
-  border: 2px solid #8b5a2b;
-  padding: 40px 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  border-radius: 8px;
-  transform-style: preserve-3d;
-  transition: transform 0.6s;
-}
+    .cover-card {
+      background: linear-gradient(145deg, #fdf6e3, #f4e4c1);
+      border: 3px solid #8b5a2b;
+      border-radius: 15px;
+      padding: 50px 30px;
+      box-shadow: 
+        0 20px 40px rgba(139, 90, 43, 0.3),
+        0 8px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transform-style: preserve-3d;
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      max-width: 450px;
+      margin: 0 auto;
+    }
 
-.book-cover-content:hover {
-  transform: rotateY(5deg);
-}
+    .cover-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.8s;
+    }
 
-.book-cover h2 {
-  font-size: 1.8rem;
-  color: #8b5a2b;
-  margin-bottom: 15px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
+    .cover-card:hover {
+      transform: rotateY(5deg) rotateX(2deg) scale(1.02);
+      box-shadow: 
+        0 30px 60px rgba(139, 90, 43, 0.4),
+        0 12px 24px rgba(0, 0, 0, 0.15);
+    }
 
-.book-cover p {
-  font-size: 1.1rem;
-  color: #5a4a42;
-  line-height: 1.5;
-}
+    .cover-card:hover::before {
+      left: 100%;
+    }
 
-.subtitle {
-  margin-top: 20px;
-  font-style: italic;
-}
+    .cover-title {
+      font-size: 2.2rem;
+      color: #8b5a2b;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
 
-/* === LIVRO ABERTO === */
-.book-open {
-  width: 100%;
-  display: none;
-}
+    .cover-subtitle {
+      font-size: 1.2rem;
+      color: #6b4423;
+      margin-bottom: 10px;
+    }
 
-.card-container {
-  position: relative;
-  width: 100%;
-  height: 500px;
-  max-width: 800px;
-  margin: 0 auto;
-  perspective: 1200px;
-}
+    .cover-description {
+      font-size: 1.1rem;
+      color: #5a4a42;
+      font-style: italic;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
 
-.card-half {
-  position: absolute;
-  top: 0;
-  width: calc(50% - 5px);
-  height: 100%;
-  background: url('https://www.transparenttextures.com/patterns/paper.png'), #fdf6e3;
-  background-size: 200px;
-  border: 1px solid #d4c1a8;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  transform-origin: center;
-  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  padding: 0;
-}
+    /* === CARTA INDIVIDUAL === */
+    .letter-container {
+      display: none;
+      perspective: 1200px;
+      width: 100%;
+      height: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
 
-.left-half {
-  left: 0;
-  border-right: none;
-  transform-origin: right center;
-  text-align: right;
-}
+    .letter-container.active {
+      display: block;
+    }
 
-.right-half {
-  right: 0;
-  border-left: none;
-  transform-origin: left center;
-  text-align: left;
-}
+    .letter-envelope {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    }
 
-.card-half.closed.left-half {
-  transform: rotateY(90deg);
-}
+    .letter-fold {
+      position: absolute;
+      background: linear-gradient(145deg, #fdf6e3, #f4e4c1);
+      border: 2px solid #d4c1a8;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
 
-.card-half.closed.right-half {
-  transform: rotateY(-90deg);
-}
+    /* Parte de trás da carta (envelope) */
+    .letter-back {
+      width: 100%;
+      height: 100%;
+      transform-origin: top;
+      z-index: 1;
+    }
 
-.card-half.open {
-  transform: rotateY(0deg);
-}
+    /* Parte da frente da carta (conteúdo) */
+    .letter-front {
+      width: 100%;
+      height: 100%;
+      transform-origin: top;
+      transform: rotateX(180deg);
+      z-index: 2;
+    }
 
-/* Conteúdo das páginas */
-.page-content {
-  padding: 25px;
-  height: 100%;
-  overflow-y: auto;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #5a4a42;
-  text-align: justify;
-}
+    .letter-envelope.opened .letter-back {
+      transform: rotateX(-180deg);
+    }
 
-.page-left {
-  text-align: right;
-}
+    .letter-envelope.opened .letter-front {
+      transform: rotateX(0deg);
+    }
 
-.page-right {
-  text-align: left;
-}
+    .letter-content {
+      padding: 40px;
+      height: 100%;
+      overflow-y: auto;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #5a4a42;
+      text-align: left;
+      position: relative;
+    }
 
-/* Sombra da dobra */
-.card-container::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 2px;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.08);
-  transform: translateX(-50%);
-  pointer-events: none;
-}
+    .letter-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 60px;
+      width: 2px;
+      height: 100%;
+      background: #e8d5b5;
+      opacity: 0.5;
+    }
 
-/* === CONTROLES === */
-.controls {
-  margin-top: 25px;
-}
+    .envelope-content {
+      padding: 40px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(45deg, #8b5a2b, #6b4423);
+      color: white;
+    }
 
-.controls button {
-  background: #8b5a2b;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
+    .envelope-title {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
 
-.controls button:hover:not(:disabled) {
-  background: #6f4722;
-}
+    .envelope-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-style: italic;
+    }
 
-.controls button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+    .letter-header {
+      font-size: 1.4rem;
+      color: #8b5a2b;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
 
-#counter {
-  margin: 0 15px;
-  font-weight: bold;
-  color: #8b5a2b;
-}
+    .letter-body {
+      margin-bottom: 30px;
+    }
 
-/* === RESPONSIVIDADE === */
-@media (max-width: 768px) {
-  .card-container {
-    height: 450px;
-  }
+    .letter-signature {
+      text-align: right;
+      font-style: italic;
+      margin-top: 40px;
+    }
 
-  .page-content {
-    padding: 18px;
-    font-size: 1rem;
-  }
+    /* === CONTROLES === */
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
 
-  .book-cover h2 {
-    font-size: 1.5rem;
-  }
+    .control-btn {
+      background: linear-gradient(145deg, #8b5a2b, #6b4423);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+      font-family: inherit;
+      min-width: 120px;
+    }
 
-  .book-cover p {
-    font-size: 1rem;
-  }
-}
+    .control-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 90, 43, 0.4);
+      background: linear-gradient(145deg, #9d6530, #7a4e26);
+    }
 
-@media (max-width: 480px) {
-  .card-container {
-    height: 400px;
-  }
+    .control-btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+    }
 
-  .page-content {
-    padding: 15px;
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2px 6px rgba(139, 90, 43, 0.2);
+    }
 
-  .book-cover-content {
-    padding: 30px 15px;
-  }
+    .counter {
+      font-weight: bold;
+      color: #8b5a2b;
+      font-size: 1.1rem;
+      min-width: 80px;
+      padding: 8px 16px;
+      background: rgba(139, 90, 43, 0.1);
+      border-radius: 20px;
+    }
 
-  .book-cover h2 {
-    font-size: 1.3rem;
-  }
-}
+    .open-btn {
+      background: linear-gradient(145deg, #d4af37, #b8941f);
+      margin-top: 20px;
+      font-size: 1.1rem;
+      padding: 15px 30px;
+    }
+
+    .open-btn:hover {
+      background: linear-gradient(145deg, #e8c547, #cc9f22);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+    }
+
+    /* === ANIMAÇÕES === */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-2px); }
+      75% { transform: translateX(2px); }
+    }
+
+    .letter-container.active {
+      animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .controls {
+      animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
+    }
+
+    /* === RESPONSIVIDADE === */
+    @media (max-width: 768px) {
+      .letter-container {
+        height: 500px;
+      }
+
+      .letter-content {
+        padding: 25px;
+        font-size: 1.1rem;
+      }
+
+      .cover-title {
+        font-size: 1.8rem;
+      }
+
+      .cover-card {
+        padding: 40px 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .letter-container {
+        height: 450px;
+      }
+
+      .letter-content {
+        padding: 20px;
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      .cover-title {
+        font-size: 1.6rem;
+      }
+
+      .cover-card {
+        padding: 30px 20px;
+      }
+
+      .controls {
+        gap: 15px;
+      }
+
+      .control-btn {
+        padding: 10px 20px;
+        min-width: 100px;
+      }
+    }
