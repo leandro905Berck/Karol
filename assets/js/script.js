@@ -7,30 +7,36 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const counter = document.getElementById('counter');
 
-// Função para carregar e exibir uma carta
+// Função para carregar e exibir uma carta (com duas páginas)
 async function carregarCarta(num) {
-  // 1. Fecha as metades
+  // Fecha as páginas
   leftHalf.classList.add('closed');
   rightHalf.classList.add('closed');
 
-  // 2. Aguarda a animação de fechar
   await new Promise(resolve => setTimeout(resolve, 800));
 
   try {
-    // 3. Busca o conteúdo da carta
     const response = await fetch(`cartas/carta${num}.html`);
     const html = await response.text();
 
-    // 4. Insere o mesmo conteúdo em ambas as metades
-    leftHalf.innerHTML = `<div class="card-content">${html}</div>`;
-    rightHalf.innerHTML = `<div class="card-content">${html}</div>`;
+    // Cria um elemento temporário para extrair as páginas
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
 
-    // 5. Atualiza controles
+    // Extrai as páginas
+    const pageLeft = tempDiv.querySelector('.page-left')?.outerHTML || '<div class="page-left"><p></p></div>';
+    const pageRight = tempDiv.querySelector('.page-right')?.outerHTML || '<div class="page-right"><p></p></div>';
+
+    // Insere no layout
+    leftHalf.innerHTML = `<div class="card-content">${pageLeft}</div>`;
+    rightHalf.innerHTML = `<div class="card-content">${pageRight}</div>`;
+
+    // Atualiza controles
     counter.textContent = `${num} / ${totalCartas}`;
     prevBtn.disabled = num === 1;
     nextBtn.disabled = num === totalCartas;
 
-    // 6. Abre a carta
+    // Abre as páginas
     setTimeout(() => {
       leftHalf.classList.remove('closed');
       leftHalf.classList.add('open');
@@ -41,11 +47,11 @@ async function carregarCarta(num) {
   } catch (err) {
     console.error("Erro ao carregar carta:", err);
     leftHalf.innerHTML = `<div class="card-content"><p>Erro ao carregar a carta.</p></div>`;
-    rightHalf.innerHTML = leftHalf.innerHTML;
+    rightHalf.innerHTML = `<div class="card-content"><p>Erro ao carregar a carta.</p></div>`;
   }
 }
 
-// Carrega a primeira carta ao iniciar
+// Inicializa
 window.addEventListener('DOMContentLoaded', () => {
   carregarCarta(cartaAtual);
 });
